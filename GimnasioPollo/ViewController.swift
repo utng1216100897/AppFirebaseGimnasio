@@ -52,6 +52,84 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     @IBAction func btnAdd(_ sender: Any) {
         addPerson()
     }
+    
+    //this function will be called when a row is selected
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        
+        //getting the selected artist
+        let person  = personList[indexPath.row]
+        
+        //building an alert
+        let alertController = UIAlertController(title: person.name, message: "Give new values to update ", preferredStyle: .alert)
+        
+        //the confirm action taking the inputs
+        let confirmAction = UIAlertAction(title: "Update", style: .default) { (_) in
+            
+            //getting artist id
+            let id = person.id
+            
+            //getting new values
+            let name = alertController.textFields?[0].text
+            let ege = alertController.textFields?[1].text
+            let peso = alertController.textFields?[2].text
+            let alt = alertController.textFields?[3].text
+            let address = alertController.textFields?[4].text
+            
+            //calling the update method to update artist
+            self.updatePerson(id: id!, name: name!, ege: ege!, peso: peso!, alt: alt!, address: address!)
+        }
+        
+        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel) { (_) in
+            //deleting artist
+            self.deletePerson(id: person.id!)
+        }
+        //adding two textfields to alert
+        alertController.addTextField { (textField) in
+            textField.text = person.name
+        }
+        alertController.addTextField { (textField) in
+            textField.text = person.ege
+        }
+        alertController.addTextField { (textField) in
+            textField.text = person.peso
+        }
+        alertController.addTextField { (textField) in
+            textField.text = person.alt
+        }
+        alertController.addTextField { (textField) in
+            textField.text = person.address
+        }
+        
+        //adding action
+        alertController.addAction(confirmAction)
+        alertController.addAction(cancelAction)
+        
+        //presenting dialog
+        present(alertController, animated: true, completion: nil)
+    }
+    
+    func updatePerson(id:String, name:String, ege:String, peso:String, alt: String, address:String){
+        //creating artist with the new given values
+        let person = ["id":id,
+                      "Name": name,
+                      "Ege": ege,
+                      "Peso":peso,
+                      "Alt":alt,
+                      "Address":address
+        ]
+        
+        //updating the artist using the key of the artist
+        refPersons.child(id).setValue(person)
+        
+    }
+    
+    func deletePerson(id:String){
+        refPersons.child(id).setValue(nil)
+
+    }
+    
+    
+    
     //defining firebase reference var
     var refPersons: DatabaseReference!
     override func viewDidLoad() {
